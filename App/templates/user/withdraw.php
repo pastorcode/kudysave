@@ -1,8 +1,7 @@
-<?php include('layout/header.php') ?>
-<?php include('layout/nav.php') ?>
+
 <div class="container-fluid mt--6">
       <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-10">
           <div class="card-wrapper">
             <!-- Input groups -->
             <div class="card card-pricing border-0 text-center mb-4">
@@ -56,44 +55,10 @@
                   </div>
                  
                 </div><br>
-                <div class="table-responsive" data-toggle="list" data-list-values='["name", "budget", "status", "completion"]' id ="food-div" style="display:">
-                    <table class="table align-items-center table-flush">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col" class="sort" data-sort="name">item</th>
-                                <th scope="col" class="sort" data-sort="budget">quantity</th>
-                                <th scope="col" class="sort" data-sort="status">amount</th>
-                            </tr>
-                        </thead>
-                        <tbody class="list" id="">
-                            <tr>
-                                <th scope="row">
-                                    <div class="media align-items-center">
-                                        <a href="#" class="avatar rounded-circle mr-3">
-                                          <img alt="Image placeholder" src="../web/assets/img/theme/bootstrap.jpg">
-                                        </a>
-                                        <div class="media-body">
-                                            <span class="name mb-0 text-sm">Yam</span>
-                                        </div>
-                                    </div>
-                                </th>
-                                <td class="budget">
-                                    $2500 USD
-                                </td>
-                                <td>
-                                    <span class="badge badge-dot mr-4">
-                                      <i class="bg-warning"></i>
-                                      <span class="status">pending</span>
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                            </tr>
-                        </tbody>
-                    </table>
-                  </div>  
+                
               </div>
             </div>
+            
             <div id="chart-line-html" class="tab-pane tab-example-result fade show " role="tabpanel" aria-labelledby="chart-line-html-tab">
               <div class="card">
                 <div class="card-header">
@@ -109,6 +74,32 @@
                 </div>
               </div>
             </div>
+            <div class="" data-toggle="list" data-list-values='["name", "budget", "status", "completion"]' id ="food-div" style="display:">
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col" >item</th>
+                                <th scope="col"  >quantity</th>
+                                <th scope="col"  >price(#)</th>
+                                <th scope="col"  >total(#)</th>
+                                <th scope="col"  >action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="list" id="food-body" style="">
+                            
+                        </tbody>
+                        <tfoot class="thead-light">
+                        
+                        <tr>
+                                <th scope="col">Total</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                <th scope="col" id="total_money"></th>
+                                <th scope="col"><button class="btn btn-outline-default" data-toggle="sweet-alert" data-sweet-alert="confirm">Buy</button></th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                  </div>  
           </div>
              
             </div>
@@ -119,16 +110,71 @@
           </div>
         </div>
         </div>
+        
 
-<?php include('layout/footer.php') ?>
 
 <script>
 $(document).ready(() => {
+  set_all_total()
 
+  
+
+  let increase = (id) => {
+    let quantity = Number($("#" + id).html())
+    let value_to_set = 0
+
+    if(quantity == 0){
+      quantity = 1
+    }else{
+      value_to_set = quantity + 1
+    }
+    $("#" + id).html(value_to_set)
+    set_price("amount_"+id, value_to_set, "total_"+id)
+    set_all_total()
+   
+  }
+
+  let decrease = (id) => {
+    let quantity = Number($("#" + id).html())
+    let value_to_set = 0
+
+    if(quantity <= 1){
+      value_to_set = 1
+    }else{
+      value_to_set = quantity - 1
+     
+    }
+    $('#' + id).html(value_to_set)
+    set_price("amount_"+id, value_to_set, "total_"+id)
+    set_all_total()
+  }
+
+  function set_price(amount,quantity,total){
+    console.log(total)
+      var price = Number($("#"+amount).html())
+      console.log(price)
+      var total_price = quantity * price
+      console.log(total_price)
+     $("#"+total).text(total_price)
+    }
+
+   
+
+  $(document).on("click","#btn_increase",function(){
+        var data_to_use = $(this).attr("data_to_use");
+         increase(data_to_use);
+        
+       // alert('here')
+      });
+
+      $(document).on("click","#btn_decrease",function(){
+        var data_to_use = $(this).attr("data_to_use");
+         decrease(data_to_use);
+       // alert('here')
+      });
     //$('#food-div').hide()
 
     $('#withdraw_btn').attr("disabled", true)
-
 
 
     $('#withdraw_form').on('input', () => {
@@ -150,25 +196,77 @@ $(document).ready(() => {
 })
 
 
+$(document).on('click', '#remove_yam, #remove_beans, #remove_garri, #remove_rice', function () {
+  //set_all_total()
+        switch(event.target.id){
+          case 'remove_yam':
+            $('#table-yam').remove()
+            break;
+          case 'remove_beans':
+            $('#table-beans').remove()
+            break;
+          case 'remove_garri':
+            $('#table-garri').remove()
+            break;
+          case 'remove_rice':
+            $('#table-rice').remove()
+            break;
+        }
+    });
+
+    function set_all_total() {
+          var total_p = $(".total_price")
+          var sum_total = 0
+          $.each(total_p, function(){
+              sum_total += Number($(this).text())
+          })
+          $("#total_money").text(sum_total)
+      }
+
   $('#yam, #garri, #rice, #beans').on('click', () => {
      // console.log(event.target.id);
      // $('#food-div').append(event.target.id)
+     set_all_total()
+    
       switch(event.target.id){
         case 'yam':
-          console.log('yes yam')
+          if($('#table-yam').length){
+            alert('Yam is added already')
+          }else{
+            var yam = '<tr id="table-yam"><th scope="row"><div class="media align-items-center"><a href="#" class="avatar rounded-circle mr-3"><img alt="Image placeholder" src="../web/images/yam.jpg" id=""></a><div class="media-body"><span class="name mb-0 text-sm">Yam</span> </div></div></th> <td class="budget"><div class="btn-group"> <button type="button" class="btn btn-default" id="btn_decrease" data_to_use="yam_value"><i class="ni ni-fat-delete"></i></button> <button type="button" class="btn btn-default" data_to_use id="yam_value">1</button> <button type="button" class="btn btn-default" id="btn_increase" data_to_use="yam_value"><i class="ni ni-fat-add"></i></button> </div></td><td id="amount_yam_value">1000</td><td class="total_price" id="total_yam_value">1000</td><td><span class="badge badge-danger" id="remove_yam" title="Delete Yam">&#x2718;</span></td></tr>'
+          $('#food-body').append(yam)
+          }
           break;
         case 'rice':
-          console.log('yes rice')
+          if($('#table-rice').length){
+            alert('Rice is added already')
+          }else{
+            var rice = '<tr id="table-rice"><th scope="row"><div class="media align-items-center"><a href="#" class="avatar rounded-circle mr-3"><img alt="Image placeholder" src="../web/images/rice.jpg" id=""></a><div class="media-body"><span class="name mb-0 text-sm">Rice</span> </div></div></th> <td class="budget"><div class="btn-group"> <button type="button" class="btn btn-default" id="btn_decrease" data_to_use="rice_value"><i class="ni ni-fat-delete"></i></button> <button type="button" class="btn btn-default" data_to_use id="rice_value">1</button> <button type="button" class="btn btn-default" id="btn_increase" data_to_use="rice_value"><i class="ni ni-fat-add"></i></button> </div></td><td id="amount_rice_value">1000</td><td class="total_price" id="total_rice_value">1000</td><td><span class="badge badge-danger" id="remove_rice" title="Delete Rice">&#x2718;</span></td></tr>'
+            $('#food-body').append(rice)
+          }
           break;
         case 'beans':
-          console.log('yes beans')
+          if($('#table-beans').length){
+            alert('Beans has been added already')
+          }else{
+            var beans = '<tr id="table-beans"><th scope="row"><div class="media align-items-center"><a href="#" class="avatar rounded-circle mr-3"><img alt="Image placeholder" src="../web/images/beans.jpg" id=""></a><div class="media-body"><span class="name mb-0 text-sm">Beans</span> </div></div></th> <td class="budget"><div class="btn-group"> <button type="button" class="btn btn-default" id="btn_decrease" data_to_use="beans_value"><i class="ni ni-fat-delete"></i></button> <button type="sumbit" class="btn btn-default" data_to_use id="beans_value" value="">1</button> <button type="button" data_to_use="beans_value" class="btn btn-default" id="btn_increase"><i class="ni ni-fat-add"></i></button> </div></td><td id="amount_beans_value">1000</td><td class="total_price" id="total_beans_value">1000</td><td><span class="badge badge-danger" id="remove_beans" title="Delete Beans">&#x2718;</span></td></tr>'
+          $('#food-body').append(beans)
+          }
           break;
         case 'garri':
-          console.log('yes garri')
+          if($('#table-garri').length){
+            alert('Garri has been added already')
+          }else{
+            var garri = '<tr id="table-garri"><th scope="row"><div class="media align-items-center"><a href="#" class="avatar rounded-circle mr-3"><img alt="Image placeholder" src="../web/images/garri.jpeg" id=""></a><div class="media-body"><span class="name mb-0 text-sm">Garri</span> </div></div></th> <td class="budget"><div class="btn-group"> <button type="button" class="btn btn-default" id="btn_decrease" data_to_use="garri_value"><i class="ni ni-fat-delete"></i></button> <button type="button" class="btn btn-default" data_to_use id="garri_value">1</button> <button type="button" class="btn btn-default" id="btn_increase" data_to_use="garri_value"><i class="ni ni-fat-add"></i></button> </div></td><td id="amount_garri_value">1000</td><td class="total_price" id="total_garri_value">1000</td><td><span class="badge badge-danger" id="remove_garri" title="Delete Garri">&#x2718;</span></td></tr>'
+             $('#food-body').append(garri)
+          }
           break;
         default:
           console.log('nothing')
       }
 
   })
+
+
+  
 </script>
