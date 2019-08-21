@@ -56,7 +56,14 @@ $template = new \Codefii\Controller\Template;
   <!-- End Google Tag Manager -->
 </head>
 
-<?php include("nav.php"); ?>
+<?php
+   if($title == 'Admin'){
+     include('adminnav.php');
+   }else{
+     include('nav.php');
+   }
+
+?>
 
 
 <?php  $template->getTemp(); ?>
