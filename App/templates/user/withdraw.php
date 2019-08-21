@@ -95,7 +95,7 @@
                                 <th scope="col"></th>
                                 <th scope="col"></th>
                                 <th scope="col" id="total_money"></th>
-                                <th scope="col"><button class="btn btn-outline-default" data-toggle="sweet-alert" data-sweet-alert="confirm">Buy</button></th>
+                                <th scope="col"><button class="btn btn-outline-default" id="buy">Buy</button></th>
                         </tr>
                         </tfoot>
                     </table>
@@ -115,7 +115,49 @@
 
 <script>
 $(document).ready(() => {
-  set_all_total()
+  
+  $("#buy").on("click", () => {
+      set_all_total()
+      let total_money = Number($("#total_money").html())
+      if(total_money > 4500){
+        $.notify("Food Items Selected is greater than your Balance <a href='/dashboard/quicksave'>Fund</a> Your wallet Now to buy more","warning")
+      }else if(total_money <= 0){
+        $.notify("No Food Item is Selected","warning")
+      }else{
+     
+      swal({
+          title: "Are you sure you want to proceed?",
+          text: "",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonClass: "btn-danger",
+          confirmButtonText: "Yes, Proceed!",
+          cancelButtonText: "No, I need to confirm!",
+          closeOnConfirm: false,
+          closeOnCancel: false
+      },
+    function(isConfirm) {
+      if (isConfirm) {
+        swal("Deleted!", "Your imaginary file has been deleted.", "success");
+      } else {
+        swal("Cancelled", "Your imaginary file is safe :)", "error");
+      }
+    });
+
+    // $.ajax({
+    //   type: 'post',
+    //   url: '',
+    //   data:{}
+    //   beforeSend: () => {
+
+    //   },
+    //   success: () => {
+
+    //   }
+    // })
+      }
+    })
+
 
   
 
@@ -150,11 +192,8 @@ $(document).ready(() => {
   }
 
   function set_price(amount,quantity,total){
-    console.log(total)
       var price = Number($("#"+amount).html())
-      console.log(price)
       var total_price = quantity * price
-      console.log(total_price)
      $("#"+total).text(total_price)
     }
 
@@ -162,18 +201,15 @@ $(document).ready(() => {
 
   $(document).on("click","#btn_increase",function(){
         var data_to_use = $(this).attr("data_to_use");
-         increase(data_to_use);
-        
-       // alert('here')
-      });
+         increase(data_to_use)
+      })
 
       $(document).on("click","#btn_decrease",function(){
         var data_to_use = $(this).attr("data_to_use");
          decrease(data_to_use);
-       // alert('here')
-      });
-    //$('#food-div').hide()
+      })
 
+    
     $('#withdraw_btn').attr("disabled", true)
 
 
@@ -197,7 +233,7 @@ $(document).ready(() => {
 
 
 $(document).on('click', '#remove_yam, #remove_beans, #remove_garri, #remove_rice', function () {
-  //set_all_total()
+  set_all_total()
         switch(event.target.id){
           case 'remove_yam':
             $('#table-yam').remove()
@@ -212,7 +248,7 @@ $(document).on('click', '#remove_yam, #remove_beans, #remove_garri, #remove_rice
             $('#table-rice').remove()
             break;
         }
-    });
+    })
 
     function set_all_total() {
           var total_p = $(".total_price")
@@ -224,8 +260,6 @@ $(document).on('click', '#remove_yam, #remove_beans, #remove_garri, #remove_rice
       }
 
   $('#yam, #garri, #rice, #beans').on('click', () => {
-     // console.log(event.target.id);
-     // $('#food-div').append(event.target.id)
      set_all_total()
     
       switch(event.target.id){
